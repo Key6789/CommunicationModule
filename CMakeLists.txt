@@ -154,7 +154,7 @@ if(QT_OPEN)
 
  # 链接其他库
 if(ADD_OTHER)
-    #target_link_libraries(${THISPROJECTNAME} PRIVATE ${ADD_OTHER_LIB})
+    target_link_libraries(${THISPROJECTNAME} PRIVATE ${ADD_OTHER_LIB})
 endif()
 
 target_compile_definitions(${THISPROJECTNAME} PRIVATE ${THIS_LIB_NAME})
@@ -173,6 +173,7 @@ if (UNIX)
      ## 路径文件创建
     make_directory(${LINUX_LIBRARY_OUTPUT_PATH})
     make_directory(${LINUX_LIBRARY_INCLUDE_PATH})
+    file(COPY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH})
     
 
 else (WIN32)

@@ -23,7 +23,7 @@
 /// @details 该类提供了连接服务器、发送数据、接收数据、关闭连接、重连机制
 /// @author hmy
 /// @date 2024/9/12
-COMMUNICATIONMODULE_EXPORT namespace CommunicationModule
+namespace CommunicationModule
 {
 	COMMUNICATIONMODULE_EXPORT class  TcpCommunication : public QTcpSocket
 	{
