@@ -19,4 +19,6 @@
 #else
 #define COMMUNICATIONMODULE_EXPORT    Q_DECL_IMPORT  extern "C"
 #endif
-#define COMMUNICATIONMODULE_EXPORT   Q_DECL_EXPORT //extern "C"
+
+
+#define __TcpString(str) QString::fromLocal8Bit(str)

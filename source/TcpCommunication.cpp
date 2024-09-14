@@ -104,12 +104,12 @@ namespace  CommunicationModule
 		QWidget* widget = new QWidget(parent);
 		QHBoxLayout* layout = new QHBoxLayout(widget);
 		QLabel* label = new QLabel(widget);
-		label->setText("连接状态：");
+		label->setText(__TcpString("连接状态："));
 		layout->addWidget(label);
 		connect(this, &TcpCommunication::connectStatusChanged, [=](bool status) {
-			QString statusText = status ? "已连接" : "未连接"; 
-			label->setText(QString("连接状态：" + statusText)); 
-			status ? label->setStyleSheet("color: green") : label->setStyleSheet("color: red");
+			QString statusText = status ? __TcpString("已连接") : __TcpString("未连接");
+			label->setText(QString(__TcpString("连接状态：") + statusText));
+			status ? label->setStyleSheet(__TcpString("color: green")) : label->setStyleSheet(__TcpString("color: red"));
 			});
 		return widget;
 	}
@@ -119,7 +119,7 @@ namespace  CommunicationModule
 		QWidget* widget = new QWidget(parent);
 		QVBoxLayout* layout = new QVBoxLayout(widget);
 		QLabel* label = new QLabel(widget);
-		label->setText("已发送数据：");
+		label->setText(__TcpString("已发送数据："));
 
 		// 显示已发送数据
 		QTextEdit* textEdit = new QTextEdit(widget);
@@ -131,11 +131,11 @@ namespace  CommunicationModule
 			textEdit->append(QString(data));
 			});
 		layout->addWidget(label, 0, Qt::AlignLeft);
-		layout->addWidget(textEdit, 1, Qt::AlignRight);
+		layout->addWidget(textEdit, 1);
 
 		// 清空操作
 		QPushButton* clearButton = new QPushButton(widget);
-		clearButton->setText("清空");
+		clearButton->setText(__TcpString("清空"));
 		layout->addWidget(clearButton);
 		connect(clearButton, &QPushButton::clicked, [=]() {
 			textEdit->clear();
@@ -150,7 +150,7 @@ namespace  CommunicationModule
 		QWidget* widget = new QWidget(parent);
 		QVBoxLayout* layout = new QVBoxLayout(widget);
 		QLabel* label = new QLabel(widget);
-		label->setText("已接收数据：");
+		label->setText(__TcpString("已接收数据："));
 
 		// 显示已接收数据
 		QTextEdit* textEdit = new QTextEdit(widget);
@@ -161,11 +161,11 @@ namespace  CommunicationModule
 			textEdit->append(QString(data));
 			});
 		layout->addWidget(label, 0, Qt::AlignLeft);
-		layout->addWidget(textEdit, 1, Qt::AlignRight);
+		layout->addWidget(textEdit, 1);
 
 		// 清空操作
 		QPushButton* clearButton = new QPushButton(widget);
-		clearButton->setText("清空");
+		clearButton->setText(__TcpString("清空"));
 		layout->addWidget(clearButton);
 		connect(clearButton, &QPushButton::clicked, [=]() {
 			textEdit->clear();
@@ -179,7 +179,7 @@ namespace  CommunicationModule
 		QWidget* widget = new QWidget(parent);
 		QVBoxLayout* layout = new QVBoxLayout(widget);
 		QLabel* label = new QLabel(widget);
-		label->setText("错误信息：");
+		label->setText(__TcpString("错误信息："));
 
 		// 显示错误信息
 		QTextEdit* textEdit = new QTextEdit(widget);
@@ -190,11 +190,11 @@ namespace  CommunicationModule
 			textEdit->append(error);
 			});
 		layout->addWidget(label, 0, Qt::AlignLeft);
-		layout->addWidget(textEdit, 1, Qt::AlignRight);
+		layout->addWidget(textEdit, 1);
 
 		// 清空操作
 		QPushButton* clearButton = new QPushButton(widget);
-		clearButton->setText("清空");
+		clearButton->setText(__TcpString("清空"));
 		layout->addWidget(clearButton);
 		connect(clearButton, &QPushButton::clicked, [=]() {
 			textEdit->clear();
@@ -208,21 +208,21 @@ namespace  CommunicationModule
 		QWidget* widget = new QWidget(parent);
 		QHBoxLayout* layout = new QHBoxLayout(widget);
 		QLabel* label = new QLabel(widget);
-		label->setText("重连状态：");
+		label->setText(__TcpString("重连状态："));
 		layout->addWidget(label);
 		connect(this, &TcpCommunication::reConnectStatusChanged, [=](bool status) {
 			QString statusText = status ? "已重连" : "重连失败";
-			label->setText(QString("重连状态：" + statusText));
-			status ? label->setStyleSheet("color: green") : label->setStyleSheet("color: red");
+			label->setText(QString(__TcpString("重连状态：") + statusText));
+			status ? label->setStyleSheet(__TcpString("color: green")) : label->setStyleSheet(__TcpString("color: red"));
 			});
 		// 显示重连次数
 		QLabel* countLabel = new QLabel(widget);
-		countLabel->setText(QString("重连次数：" + QString::number(m_reconnectCount)));
+		countLabel->setText(QString(__TcpString("重连次数：") + QString::number(m_reconnectCount)));
 		layout->addWidget(countLabel);
 
 		// 设置重连次数
 		QLabel* reconnectCountLabel = new QLabel(widget);
-		reconnectCountLabel->setText("重连次数：");
+		reconnectCountLabel->setText(__TcpString("重连次数："));
 		layout->addWidget(reconnectCountLabel);
 		QSpinBox* reconnectCountSpinBox = new QSpinBox(widget);
 		reconnectCountSpinBox->setMinimum(0);
@@ -231,12 +231,12 @@ namespace  CommunicationModule
 		layout->addWidget(reconnectCountSpinBox);
 		connect(reconnectCountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value) {
 			setReconnectCount(value);
-			countLabel->setText(QString("重连次数：" + QString::number(m_reconnectCount)));
+			countLabel->setText(QString(__TcpString("重连次数：") + QString::number(m_reconnectCount)));
 			});
 
 		// 显示重连按钮
 		QPushButton* reconnectButton = new QPushButton(widget);
-		reconnectButton->setText("重连");
+		reconnectButton->setText(__TcpString("重连"));
 		layout->addWidget(reconnectButton);
 		connect(reconnectButton, &QPushButton::clicked, [=]() {
 			startReconnect();

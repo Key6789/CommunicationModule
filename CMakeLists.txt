@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.14)
 ### 用于生成 .lib 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(CMAKE_BUILD_TYPE Debug)
+
+
+#set(CMAKE_BUILD_TYPE Debug)
 
 ############################################ 参数设置区 ########################################
 #### 当前项目的版本号
@@ -105,6 +107,15 @@ endif()
 #### 定义一个CMake项目，项目名称为Test11，项目版本为0.1，使用的编程语言为C++
 project(${THIS_LIB_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
+##  判断是否为debug模式
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Debug Mode")
+    set(DEBUG_MODE ON)
+else()
+    message(STATUS "Release Mode")
+    set(DEBUG_MODE OFF)
+endif()
+
 # 设置CMake自动处理Qt的UI、MOC和RCC文件
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -158,9 +169,15 @@ target_compile_definitions(${THISPROJECTNAME} PRIVATE ${THIS_LIB_NAME})
 # 设置输出属性
 
 if (UNIX)
-
     ##  linux 库文件输出路径
-    set(LINUX_LIBRARY_OUTPUT_PATH ${LINUX_LIBRARY_OUTPUT_PATH_ROOT}/Lib)
+    if(DEBUG_MODE)
+        ## 调试模式
+        set(LINUX_LIBRARY_OUTPUT_PATH ${LINUX_LIBRARY_OUTPUT_PATH_ROOT}/Lib/Debug)
+    else()
+        ## 发布模式
+        set(LINUX_LIBRARY_OUTPUT_PATH ${LINUX_LIBRARY_OUTPUT_PATH_ROOT}/Lib/Release)
+    endif()
+
     ##  linux .h 文件输出路径
     set(LINUX_LIBRARY_INCLUDE_PATH ${LINUX_LIBRARY_OUTPUT_PATH_ROOT}/Include)
 
@@ -174,7 +191,15 @@ if (UNIX)
 
 else (WIN32)
     ## 设置Windows库的输出路径和包含路径
-    set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Lib)
+
+    if(DEBUG_MODE)
+        ## 调试模式
+        set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Lib/Debug)
+    else()
+        ## 发布模式
+        set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Lib/Release)
+    endif()
+
     ## 设置Windows库的包含路径
     set(WIN_LIBRARY_INCLUDE_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT})
     ## 运行目录输出
@@ -184,58 +209,87 @@ else (WIN32)
     make_directory(${WIN_LIBRARY_INCLUDE_PATH})
 endif()
 
-if (UNIX)
-   set_target_properties(${THISPROJECTNAME} PROPERTIES
-    OUTPUT_NAME "${THISPROJECTNAME}"
-    SUFFIX ".so"
-    LIBRARY_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
-    RUNTIME_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
-    make_directory(${LINUX_LIBRARY_INCLUDE_PATH})
-    install(DIRECTORY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH})
-   )
 
-else (WIN32)
-   set_target_properties(${THISPROJECTNAME} PROPERTIES
-    OUTPUT_NAME "${THISPROJECTNAME}"
-    SUFFIX ".dll"
-    
-    LIBRARY_OUTPUT_DIRECTORY ${WIN_LIBRARY_INCLUDE_PATH}
-    ## exe dll 路径
-    RUNTIME_OUTPUT_DIRECTORY ${WIN_LIBRARY_OUTPUT_PATH}
-)
-make_directory(${WIN_LIBRARY_INCLUDE_PATH})
+
+# 路径文件创建
+#make_directory(${WIN_LIBRARY_INCLUDE_PATH})
+
+################################################## 安装 ##########################################
+#“安装”通常指的是将编译或构建过程中生成的文件（如可执行文件、库文件、配置文件等）复制到特定的目录
+################################################## 头文件 安装 ###################################
 if(WIN32)
     install(DIRECTORY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${WIN_LIBRARY_INCLUDE_PATH})
 else(UNIX)
     install(DIRECTORY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
 endif()
-#install(DIRECTORY include DESTINATION ${WIN_LIBRARY_INCLUDE_PATH})
-# 复制子目录中的文件到输出目录
-#file(COPY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${WIN_LIBRARY_INCLUDE_PATH})
-# 安装 .lib 文件
-if(WIN32)
 
-install(TARGETS ${THISPROJECTNAME}
-            EXPORT ${THIS_LIB_NAME}
-            ARCHIVE DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
-            LIBRARY DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
-            RUNTIME DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
-else(UNIX)
-
-install(TARGETS ${THISPROJECTNAME}
+################################################## 库文件 安装 ###################################
+if (UNIX)
+    if(DEBUG_MODE)
+    # 设置输出属性
+        set_target_properties(${THISPROJECTNAME} PROPERTIES
+            OUTPUT_NAME "${THISPROJECTNAME}"
+            SUFFIX "_debug.so"
+            #LIBRARY_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
+            #RUNTIME_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
+            make_directory(${LINUX_LIBRARY_INCLUDE_PATH})
+            install(DIRECTORY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH})
+        )
+        install(TARGETS ${THISPROJECTNAME}
             EXPORT ${THIS_LIB_NAME}
             ARCHIVE DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
             LIBRARY DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
-            RUNTIME DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})  
-endif()
-# 安装 .dll 文件
+            RUNTIME DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+    else()
+            # 设置输出属性
+            set_target_properties(${THISPROJECTNAME} PROPERTIES
+                OUTPUT_NAME "${THISPROJECTNAME}"
+                SUFFIX "_release.so"
+                LIBRARY_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
+                RUNTIME_OUTPUT_DIRECTORY ${LINUX_LIBRARY_OUTPUT_PATH}
+                make_directory(${LINUX_LIBRARY_INCLUDE_PATH})
+                 install(DIRECTORY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH})
+            )
+            install(TARGETS ${THISPROJECTNAME}
+                    EXPORT ${THIS_LIB_NAME}
+                    ARCHIVE DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
+                    LIBRARY DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
+                    RUNTIME DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+   endif()
 
 
+else (WIN32)
+    if(DEBUG_MODE)
+        ### 调试模式 修改后缀
+        set_target_properties(${THISPROJECTNAME} PROPERTIES OUTPUT_NAME "${THISPROJECTNAME}" SUFFIX "_debug.dll")
+        
+        # 安装到输出目录
+        install(TARGETS ${THISPROJECTNAME}
+                EXPORT ${THIS_LIB_NAME}
+                ARCHIVE DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
+                LIBRARY DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
+                RUNTIME DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+    else()
+
+        ### 发布模式 修改后缀
+        set_target_properties(${THISPROJECTNAME} PROPERTIES OUTPUT_NAME "${THISPROJECTNAME}" SUFFIX "_release.dll")
+        
+        # TARGETS   ${THISPROJECTNAME}： 指定要安装的目标文件，${THISPROJECTNAME}是目标的名称。
+        # EXPORT    ${THIS_LIB_NAME}：   导出目标的安装信息，${THIS_LIB_NAME}是导出的库名称。
+        # ARCHIVE   DESTINATION         ${WIN_LIBRARY_OUTPUT_PATH}：指定静态库文件的安装路径，${WIN_LIBRARY_OUTPUT_PATH}是路径变量。
+        # LIBRARY   DESTINATION         ${WIN_LIBRARY_OUTPUT_PATH}：指定共享库文件的安装路径，${WIN_LIBRARY_OUTPUT_PATH}是路径变量。
+        # RUNTIME   DESTINATION          ${WIN_LIBRARY_OUTPUT_PATH}：指定可执行文件的安装路径，${WIN_LIBRARY_OUTPUT_PATH}是路径变量。
+        install(TARGETS ${THISPROJECTNAME}
+                EXPORT ${THIS_LIB_NAME}
+                ARCHIVE DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
+                LIBRARY DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
+                RUNTIME DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+
+    # 结束
+    endif()
 endif()
 
 # 设置宏定义
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${THISPROJECTNAME} PUBLIC ${THIS_LIB_NAME})
 endif()
-
-# 将头文件输出到指定目录

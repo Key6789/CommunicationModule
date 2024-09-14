@@ -110,7 +110,7 @@ namespace CommunicationModule
 
 	private:
 		//@brief 服务器IP地址
-		QString m_serverIP = QString("127.0.0.1");
+		QString m_serverIP = __TcpString("127.0.0.1");
 
 		//@brief 服务器端口号
 		quint16 m_serverPort = 8080;
