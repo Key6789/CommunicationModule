@@ -144,17 +144,13 @@ add_library(${THISPROJECTNAME} SHARED ${PROJECT_SOURCES})
  # 链接 Qt 核心库到 Test11
 if(QT_OPEN)
     target_link_libraries(${THISPROJECTNAME} PRIVATE 
-    Qt5::Core 
-    Qt5::Widgets 
-    Qt5::Network
-    Qt5::Gui
-    Qt5::Concurrent
+    ${THIS_QT_CORE_LIB}
     )
  endif()
 
  # 链接其他库
 if(ADD_OTHER)
-    #target_link_libraries(${THISPROJECTNAME} PRIVATE ${ADD_OTHER_LIB})
+    target_link_libraries(${THISPROJECTNAME} PRIVATE ${ADD_OTHER_LIB})
 endif()
 
 target_compile_definitions(${THISPROJECTNAME} PRIVATE ${THIS_LIB_NAME})
@@ -173,6 +169,7 @@ if (UNIX)
      ## 路径文件创建
     make_directory(${LINUX_LIBRARY_OUTPUT_PATH})
     make_directory(${LINUX_LIBRARY_INCLUDE_PATH})
+    file(COPY ${PROJECT_CURRENT_PATH_INCLUDE} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH})
     
 
 else (WIN32)
