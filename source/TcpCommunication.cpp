@@ -12,7 +12,7 @@ namespace  CommunicationModule
 		connect(this, &QTcpSocket::disconnected, [=]() {emit connectStatusChanged(false); });
 
 		// 处理QTcpSocket读取数据的信号槽连接
-		//connect(this, &QTcpSocket::readyRead, [=]() {emit readAll().isEmpty() ? 1 : emit receiveSendData(readAll()); });
+		connect(this, &QTcpSocket::readyRead, [=]() {emit receiveSendData(readAll());});
 
 		// 处理QTcpSocket错误信号的信号槽连接
 		connect(this, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &TcpCommunication::handleError);
@@ -140,7 +140,6 @@ namespace  CommunicationModule
 		connect(clearButton, &QPushButton::clicked, [=]() {
 			textEdit->clear();
 			});
-
 		return widget;
 	}
 
@@ -246,10 +245,36 @@ namespace  CommunicationModule
 
 		return widget;
 	}
+	QWidget* TcpCommunication::showSetSendCommand(QWidget* parent)
+	{
+		// 显示发送命令
+		QWidget* widget = new QWidget(parent);
+		QHBoxLayout* layout = new QHBoxLayout(widget);
+		QLabel* label = new QLabel(widget);
+		label->setText(__TcpString("发送命令："));
+		layout->addWidget(label);
+		QLineEdit* lineEdit = new QLineEdit(widget);
+		layout->addWidget(lineEdit);
+		QPushButton* sendButton = new QPushButton(widget);
+		sendButton->setText(__TcpString("发送"));
+		layout->addWidget(sendButton);
+		connect(sendButton, &QPushButton::clicked, [=]() {
+			QByteArray data = lineEdit->text().toUtf8();
+			sendCommand(data);
+			});
+		return widget;
+	}
 	void TcpCommunication::startReconnect()
 	{
 		// 停止重连定时器
 		m_reconnectTimer->stop();
+
+		//如果连接成功，直接退出
+		if (isConnected()) {
+			emit connectStatusChanged(true);
+			return;
+		}
+		emit connectStatusChanged(false);
 		// 重新连接
 		connectToServer(m_serverIP, m_serverPort);
 

@@ -80,6 +80,9 @@ namespace CommunicationModule
 		// 显示重连的窗口
 		QWidget* showReconnect(QWidget* parent);
 
+		// 显示等待的窗口
+		QWidget* showSetSendCommand(QWidget* parent);
+
 
 
 	signals:
