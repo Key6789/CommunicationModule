@@ -16,6 +16,8 @@
 #include <QMutex>
 
 // 导出宏，用于声明接口 如果在类外定义接口，则需要在前面加上COMMUNICATIONMODULE_EXPORT
+#define TCPCOMMUNICATION_NAME			"CommunicationModule::TcpCommunication"
+#define TCPCOMMUNICATION_TYPE			CommunicationModule::TcpCommunication
 
 /// @brief 通信模块的Tcp通信类
 /// @details 继承自QTcpSocket类，实现Tcp通信功能
