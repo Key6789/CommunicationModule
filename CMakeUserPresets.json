@@ -48,11 +48,29 @@
           "checksum": "XCwFVA+s0hILNL/cg4bSsp5FxYw="
         }
       }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_msvc2017",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/msvc2017"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x86"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "2v4TSRhvj4+6Q616+yuYbCwv4DI="
+        }
+      }
     }
   ],
   "vendor": {
     "qt-project.org/Presets": {
-      "checksum": "ryyh5uveuRfB77QpoPzlsRUtOUc="
+      "checksum": "P3do6+6XWdEoE9SeerdQP6pRSd8="
     }
   }
 }

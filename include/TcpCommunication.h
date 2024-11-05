@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#ifndef COMMUNICATIONMODULE_H
+#define COMMUNICATIONMODULE_H
+
+
 #include "TcpCommunication_global.h"
 #include <QTcpSocket>
 #include <QTimer>
@@ -27,7 +31,7 @@
 /// @date 2024/9/12
 namespace CommunicationModule
 {
-	COMMUNICATIONMODULE_EXPORT class  TcpCommunication : public QTcpSocket
+	class COMMUNICATIONMODULE_EXPORT TcpCommunication : public QTcpSocket
 	{
 		Q_OBJECT
 	public:
@@ -87,18 +91,18 @@ namespace CommunicationModule
 
 
 
-	signals:
+	Q_SIGNALS:
 		//@brief 连接成功信号
 		void connectStatusChanged(bool isConnected);
 		//@brief 接收到数据信号
-		void receiveSendData(const QByteArray& data);
+		void receiveSendData(QByteArray data);
 
-		void showSendDataValue(const QByteArray& data);
+		void showSendDataValue(QByteArray data);
 		//@brief 发送数据完成信号
 		void sendDataFinished(bool isSuccess);
 
 		//@brief 错误信号
-		void sendError(const QString& errorMsg);
+		void sendError(QString errorMsg);
 
 		//@brief 重连信号
 		void reConnectStatusChanged(bool isReconnect);
@@ -134,3 +138,4 @@ namespace CommunicationModule
 
 	};
 }
+#endif

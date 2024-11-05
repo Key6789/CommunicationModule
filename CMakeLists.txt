@@ -106,7 +106,7 @@ endif()
 
 #### 定义一个CMake项目，项目名称为Test11，项目版本为0.1，使用的编程语言为C++
 project(${THIS_LIB_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
-
+add_definitions(-DQSCINTILLA_DLL)
 ##  判断是否为debug模式
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug Mode")
