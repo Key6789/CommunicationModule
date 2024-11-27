@@ -27,6 +27,8 @@ namespace  CommunicationModule
 	}
 	bool TcpCommunication::connectToServer(const QString& ip, quint16 port)
 	{
+		m_serverIP = ip;
+		m_serverPort = port;
 		// 通讯连接
 		connectToHost(ip, port);
 
@@ -267,7 +269,7 @@ namespace  CommunicationModule
 	void TcpCommunication::startReconnect()
 	{
 		// 停止重连定时器
-		m_reconnectTimer->stop();
+		//m_reconnectTimer->stop();
 
 		//如果连接成功，直接退出
 		if (isConnected()) {

@@ -4,7 +4,17 @@ cmake_minimum_required(VERSION 3.14)
 ### 用于生成 .lib 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+##  判断是否为debug模式
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Debug Mode")
+    set(DEBUG_MODE ON)
+else()
+    message(STATUS "Release Mode")
+    set(DEBUG_MODE OFF)
+endif()
 
+### 是否生成 exe
+set(BUILD_EXE false)
 
 #set(CMAKE_BUILD_TYPE Debug)
 
@@ -26,6 +36,9 @@ set(THISPROJECTNAME CommunicationModule)
 
 #### 库名称宏
 set(THIS_LIB_NAME COMMUNICATIONMODULE_LIBRARY)
+
+
+
 
 
 ###################### 必改项： 文件输出路径  ##############
@@ -76,11 +89,67 @@ endif()
 
 
 #### 其余外部库
-## 设置是否加载外部库 若为空，设置为 false
-set(ADD_OTHER false)
 
-if(ADD_OTHER)
-    set(ADD_OTHER_LIB xxx.lib)
+if(WIN32)
+    if(DEBUG_MODE)
+        ## 设置是否加载外部库 若为空，设置为 false
+        set(ADD_OTHER true)
+         ### 其他库
+         ### 头文件
+        set(ADD_OTHER_HEADER 
+             ## 头文件目录
+             #"D:/Soft/AtamiLib/CommunicationModule/include/"
+             #"D:/Soft/AtamiLib/TcpXViewModule/include/"
+
+
+         )
+        ### 库文件
+        set(ADD_OTHER_LIB 
+            ## 库文件 lib 目录
+            #"D:/Soft/AtamiLib/CommunicationModule/Lib/Debug/"
+            #"D:/Soft/AtamiLib/TcpXViewModule/Lib/Debug/"
+
+         )
+         ### 库文件 dll
+        set(ADD_OTHER_DLL 
+             ## 库文件 dll 目录
+            # "D:/Soft/AtamiLib/CommunicationModule/Lib/Debug/"
+            #"D:/Soft/AtamiLib/TcpXViewModule/Lib/Debug/"
+        )
+     else()
+        ## 设置是否加载外部库 若为空，设置为 false
+        set(ADD_OTHER true)
+         ### 其他库
+         ### 头文件
+        set(ADD_OTHER_HEADER 
+             ## 头文件目录
+             "D:/Soft/AtamiLib/CommunicationModule/include"
+         )
+        ### 库文件
+        set(ADD_OTHER_LIB 
+            ## 库文件 lib 目录
+            "D:/Soft/AtamiLib/CommunicationModule/Lib/Release/"
+
+         )
+         ### 库文件 dll
+        set(ADD_OTHER_DLL 
+             ## 库文件 dll 目录
+             "D:/Soft/AtamiLib/CommunicationModule/Lib/Release/"
+        )
+     endif()
+else(UNIX)
+    set(ADD_OTHER false)
+    ### 其他库
+    ### 头文件
+    set(ADD_OTHER_HEADER 
+        ## 头文件目录
+        #include/TcpXViewModule.h
+    )
+    ### 库文件
+    set(ADD_OTHER_SO
+        ## 库文件
+
+    )
 endif()
 
 
@@ -96,6 +165,14 @@ else()
     set(SOURCEFILE source/Test11.cpp)
 endif()
 
+######################################## 参数检查区 #########################################
+if(ADD_OTHER)
+    foreach(HEADER ${ADD_OTHER_LIB} ${ADD_OTHER_HEADER} ${ADD_OTHER_DLL})
+        if(NOT EXISTS ${HEADER})
+            message(FATAL_ERROR "三方库路径不存在，请检查路径是否正确。")
+        endif()
+    endforeach()
+endif()
 
 
 
@@ -106,6 +183,7 @@ endif()
 
 #### 定义一个CMake项目，项目名称为Test11，项目版本为0.1，使用的编程语言为C++
 project(${THIS_LIB_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+
 add_definitions(-DQSCINTILLA_DLL)
 ##  判断是否为debug模式
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -134,6 +212,12 @@ if(QT_OPEN)
     find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${THIS_QT_CORE})
 endif()
 
+# 获取 Qt 的架构信息
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(QT_BIT "64")
+else()
+    set(QT_BIT "32")
+endif()
 
 ### 自动收集 .h .cpp
 if(AUTOFINDFILE)
@@ -154,14 +238,29 @@ add_library(${THISPROJECTNAME} SHARED ${PROJECT_SOURCES})
 
  # 链接 Qt 核心库到 Test11
 if(QT_OPEN)
-    target_link_libraries(${THISPROJECTNAME} PRIVATE 
-    ${THIS_QT_CORE_LIB}
-    )
- endif()
-
+        target_link_libraries(${THISPROJECTNAME} PRIVATE 
+        ${THIS_QT_CORE_LIB}
+        )
+endif()
  # 链接其他库
+ set(LIBS_FILES_LIST "")
+ if(WIN32)
+    foreach(var ${ADD_OTHER_LIB})
+    file(GLOB_RECURSE LIBS_FILES "${var}*.lib")
+    list(APPEND LIBS_FILES_LIST ${LIBS_FILES})
+    endforeach()
+else(UNIX)
+    foreach(var ${ADD_OTHER_SO})
+    file(GLOB_RECURSE LIBS_FILES "${var}*.so*")
+    list(APPEND LIBS_FILES_LIST ${LIBS_FILES})
+    endforeach()
+endif()
+
+
 if(ADD_OTHER)
-    target_link_libraries(${THISPROJECTNAME} PRIVATE ${ADD_OTHER_LIB})
+    include_directories(${ADD_OTHER_HEADER})
+    target_link_libraries(${THISPROJECTNAME} PRIVATE ${LIBS_FILES_LIST})
+    message("添加其他三方库 : " ${LIBS_FILES_LIST})
 endif()
 
 target_compile_definitions(${THISPROJECTNAME} PRIVATE ${THIS_LIB_NAME})
@@ -191,10 +290,13 @@ if (UNIX)
 
 else (WIN32)
     ## 设置Windows库的输出路径和包含路径
-
     if(DEBUG_MODE)
         ## 调试模式
-        set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Lib/Debug)
+        if(QT_BIT EQUAL 64)
+            set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Win64/Lib/Debug)
+        else()
+            set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Win32/Lib/Debug)
+        endif()
     else()
         ## 发布模式
         set(WIN_LIBRARY_OUTPUT_PATH ${WIN_LIBRARY_OUTPUT_PATH__ROOT}/Lib/Release)
@@ -240,6 +342,13 @@ if (UNIX)
             ARCHIVE DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
             LIBRARY DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
             RUNTIME DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+            if(ADD_OTHER)
+                install(DIRECTORY ${ADD_OTHER_HEADER} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH}/include)
+                install(DIRECTORY ${ADD_OTHER_LIB} DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+                install(DIRECTORY ${ADD_OTHER_DLL} DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+            endif()
+
+        
     else()
             # 设置输出属性
             set_target_properties(${THISPROJECTNAME} PROPERTIES
@@ -255,6 +364,13 @@ if (UNIX)
                     ARCHIVE DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
                     LIBRARY DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH}
                     RUNTIME DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+
+            ## 其他库
+            if(ADD_OTHER)
+                  install(DIRECTORY ${ADD_OTHER_HEADER} DESTINATION ${LINUX_LIBRARY_INCLUDE_PATH}/include)
+                  install(DIRECTORY ${ADD_OTHER_LIB} DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+                  install(DIRECTORY ${ADD_OTHER_DLL} DESTINATION ${LINUX_LIBRARY_OUTPUT_PATH})
+             endif()
    endif()
 
 
@@ -269,6 +385,13 @@ else (WIN32)
                 ARCHIVE DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
                 LIBRARY DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
                 RUNTIME DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+
+                if(ADD_OTHER)
+                    #install(DIRECTORY ${ADD_OTHER_HEADER} DESTINATION ${WIN_LIBRARY_INCLUDE_PATH}/include)
+                    #install(DIRECTORY ${ADD_OTHER_LIB} DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+                    #install(DIRECTORY ${ADD_OTHER_DLL} DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+                endif()
+
     else()
 
         ### 发布模式 修改后缀
@@ -285,6 +408,12 @@ else (WIN32)
                 LIBRARY DESTINATION ${WIN_LIBRARY_OUTPUT_PATH}
                 RUNTIME DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
 
+        if(ADD_OTHER)
+            install(DIRECTORY ${ADD_OTHER_HEADER} DESTINATION ${WIN_LIBRARY_INCLUDE_PATH}/include)
+            install(DIRECTORY ${ADD_OTHER_LIB} DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+            install(DIRECTORY ${ADD_OTHER_DLL} DESTINATION ${WIN_LIBRARY_OUTPUT_PATH})
+        endif()
+
     # 结束
     endif()
 endif()
@@ -292,4 +421,29 @@ endif()
 # 设置宏定义
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${THISPROJECTNAME} PUBLIC ${THIS_LIB_NAME})
+endif()
+
+
+
+### 添加exe
+if(BUILD_EXE)
+    add_executable(${THISPROJECTNAME}_exe ${PROJECT_SOURCES}
+    )
+    target_link_libraries(${THISPROJECTNAME}_exe 
+        ${THIS_QT_CORE_LIB}
+        ${LIBS_FILES}
+    )
+
+if(WIN32)
+    set_target_properties(${THISPROJECTNAME}_exe PROPERTIES
+        OUTPUT_NAME ${THISPROJECTNAME}_exe
+        SUFFIX "_debug.exe"
+        RUNTIME_OUTPUT_DIRECTORY ${WIN_RUNTIME_DIRECTORY}
+    )
+else(UNIX)
+    set_target_properties(${THISPROJECTNAME}_exe PROPERTIES
+        OUTPUT_NAME ${THISPROJECTNAME}_exe
+        RUNTIME_OUTPUT_DIRECTORY ${LINUX_RUNTIME_DIRECTORY}
+    )
+endif()
 endif()
