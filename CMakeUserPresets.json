@@ -66,11 +66,119 @@
           "checksum": "2v4TSRhvj4+6Q616+yuYbCwv4DI="
         }
       }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_msvc2015_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/msvc2015_64"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x64"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "kAWhx0ptzN7RyHBSuuhKjg+9/HA="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_winrt_armv7_msvc2015",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/winrt_armv7_msvc2015"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x86"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "n5cS8iMuWou2I6NqHSq1qXyGZg0="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_winrt_armv7_msvc2017",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/winrt_armv7_msvc2017"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x86"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "IrPDSUgDzxl7yRRugf3IjYBf/10="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_winrt_x64_msvc2015",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/winrt_x64_msvc2015"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x64"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "+noj4bouf6EihO/ApoVNdCFc++U="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_winrt_x64_msvc2017",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/winrt_x64_msvc2017"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x64"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "2ZZ2Tq2dpjTB9dbAVMZuzJr275U="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.14.2_winrt_x86_msvc2017",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "D:/Soft/QT/5.14.2/winrt_x86_msvc2017"
+      },
+      "architecture": {
+        "strategy": "external",
+        "value": "x86"
+      },
+      "generator": "Ninja",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "doxwNJweyFg9zgoUdVvVFqbpnZY="
+        }
+      }
     }
   ],
   "vendor": {
     "qt-project.org/Presets": {
-      "checksum": "P3do6+6XWdEoE9SeerdQP6pRSd8="
+      "checksum": "HodjZ+pcJsKREMef8cf1IBh7+n0="
     }
   }
 }

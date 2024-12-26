@@ -69,6 +69,9 @@ namespace CommunicationModule
 		//@param count 重连次数
 		void setReconnectCount(int count);
 
+		void setConnectIndex(const int& index);
+		int getConnectIndex();
+
 		/********************* 界面显示部分*************************************/
 	public:
 		// 显示连接状态的窗口
@@ -135,6 +138,8 @@ namespace CommunicationModule
 
 		//@brief 重连次数
 		int m_reconnectCount = INT_MAX;
+
+		int m_connectIndex = 0;
 
 	};
 }

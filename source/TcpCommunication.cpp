@@ -101,6 +101,14 @@ namespace  CommunicationModule
 		// 设置重连次数
 		m_reconnectCount = count;
 	}
+	void TcpCommunication::setConnectIndex(const int& index)
+	{
+		m_connectIndex = index;
+	}
+	int TcpCommunication::getConnectIndex()
+	{
+		return m_connectIndex;
+	}
 	QWidget* TcpCommunication::showConnectStatus(QWidget* parent)
 	{
 		QWidget* widget = new QWidget(parent);
